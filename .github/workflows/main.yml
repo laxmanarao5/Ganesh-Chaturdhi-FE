@@ -2,16 +2,11 @@ name: FE dev deployment
 
 on:
   push:
-    branches: ['fe-dev']
+    branches: ['main']
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      working-directory: 'employees-app'
-    defaults:
-      run:
-        working-directory: ${{ env.working-directory }}
 
     steps:
       - name: Checkout code
@@ -38,7 +33,7 @@ jobs:
           aws-region: ${{secrets.REGION_NAME}}
 
       - name: Deploy to S3 bucket
-        run: aws s3 sync ./build s3://Ganesh-Chaturdi-FE
+        run: aws s3 sync ./build s3://vinayaka-chaturdi-fe
 
       - name: Create invalidation
-        run: aws cloudfront create-invalidation --distribution-id E2H972DD5M0YGI --paths "/*"
+        run: aws cloudfront create-invalidation --distribution-id E1OCNTSTTFABVD --paths "/*"
