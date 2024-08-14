@@ -5,7 +5,7 @@ import { Home, Expenditure, Donations, Layout, Login } from './components/index.
 import { createBrowserRouter, RouterProvider, Route, createRoutesFromElements } from 'react-router-dom';
 
 // Example authentication status
-const isLoggedIn = true;
+const isLoggedIn = false;
 
 // Define routes
 const router = createBrowserRouter(
