@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, SlidersHorizontal, Plus, Edit, Trash } from 'lucide-react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 
 // Sample data for demonstration purposes
 const initialData = [
@@ -24,6 +26,14 @@ const initialData = [
   { id: 19, date: '2024-02-05', description: 'Item 19', user: 'Reebok', amount: '₹45k' },
   { id: 20, date: '2024-03-15', description: 'Item 20', user: 'Nike', amount: '₹65k' }
 ];
+
+// Validation schema using Yup
+const validationSchema = Yup.object({
+  date: Yup.date().required('Date is required'),
+  description: Yup.string().required('Description is required'),
+  user: Yup.string().required('User is required'),
+  amount: Yup.string().required('Amount is required')
+});
 
 const Expenditure = () => {
   const [sampleData, setSampleData] = useState(initialData)
@@ -61,8 +71,6 @@ const Expenditure = () => {
       return;
     }
 
-    console.log(sampleData, 'sample data')
-    console.log(selectedYear, 'selected year')
     const filtered = sampleData.filter(item => {
       const itemDate = new Date(item.date);
       const itemYear = itemDate.getFullYear();
@@ -76,7 +84,6 @@ const Expenditure = () => {
         (selectedUser ? item.user === selectedUser : true)
       );
     });
-    console.log(filtered, 'filtered results')
     setFilteredResults(filtered);
     setCurrentPage(1); // Reset to first page when filters change
   };
@@ -170,12 +177,7 @@ const Expenditure = () => {
               type="button"
               onClick={() => {
                 setIsModalOpen(true)
-                setFormData({
-                  date: '',
-                  description: '',
-                  user: '',
-                  amount: ''
-                })
+                setEditingItem(null)
               }}
               className="text-sm font-semibold bg-black text-white px-3 py-1 rounded flex items-center"
             >
@@ -336,67 +338,80 @@ const Expenditure = () => {
       </div>
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" onClick={() => setIsModalOpen(false)}>
-          <div className="bg-white p-4 rounded-md w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-lg font-semibold mb-4">Add/Edit Expenditure</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Date</label>
-                <input
-                  type="date"
-                  value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  className="w-full border p-2 rounded"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Description</label>
-                <input
-                  type="text"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full border p-2 rounded"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                {/* TO DO: REMOVE THIS USER AND ADD CURRENT USER */}
-                <label className="block text-sm font-medium mb-1">User</label>
-                <input
-                  type="text"
-                  value={formData.user}
-                  onChange={(e) => setFormData({ ...formData, user: e.target.value })}
-                  className="w-full border p-2 rounded"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Amount</label>
-                <input
-                  type="text"
-                  value={formData.amount}
-                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                  className="w-full border p-2 rounded"
-                  required
-                />
-              </div>
-              <div className="flex justify-end space-x-2">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="text-sm font-semibold text-gray-600 border px-4 py-2 rounded"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-black text-white px-4 py-2 rounded"
-                >
-                  Submit
-                </button>
-              </div>
-            </form>
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white rounded-md p-6 shadow-lg w-11/12 md:w-1/2">
+            <h2 className="text-lg font-bold mb-4">{editingItem ? 'Edit Expenditure' : 'Add Expenditure'}</h2>
+            <Formik
+              initialValues={{
+                date: editingItem?.date || '',
+                description: editingItem?.description || '',
+                user: editingItem?.user || '',
+                amount: editingItem?.amount || ''
+              }}
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
+            >
+              {({ isSubmitting }) => (
+                <Form>
+                  <div className="mb-4">
+                    <label htmlFor="date" className="block text-sm font-semibold mb-2">Date</label>
+                    <Field
+                      type="date"
+                      id="date"
+                      name="date"
+                      className="border p-2 rounded w-full"
+                    />
+                    <ErrorMessage name="date" component="div" className="text-red-600 text-sm" />
+                  </div>
+                  <div className="mb-4">
+                    <label htmlFor="description" className="block text-sm font-semibold mb-2">Description</label>
+                    <Field
+                      type="text"
+                      id="description"
+                      name="description"
+                      className="border p-2 rounded w-full"
+                    />
+                    <ErrorMessage name="description" component="div" className="text-red-600 text-sm" />
+                  </div>
+                  <div className="mb-4">
+                    <label htmlFor="user" className="block text-sm font-semibold mb-2">User</label>
+                    <Field
+                      type="text"
+                      id="user"
+                      name="user"
+                      className="border p-2 rounded w-full"
+                    />
+                    <ErrorMessage name="user" component="div" className="text-red-600 text-sm" />
+                  </div>
+                  <div className="mb-4">
+                    <label htmlFor="amount" className="block text-sm font-semibold mb-2">Amount</label>
+                    <Field
+                      type="text"
+                      id="amount"
+                      name="amount"
+                      className="border p-2 rounded w-full"
+                    />
+                    <ErrorMessage name="amount" component="div" className="text-red-600 text-sm" />
+                  </div>
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => setIsModalOpen(false)}
+                      className="bg-gray-200 px-4 py-2 rounded mr-2"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="bg-black text-white px-4 py-2 rounded"
+                    >
+                      {editingItem ? 'Update' : 'Add'}
+                    </button>
+                  </div>
+                </Form>
+              )}
+            </Formik>
           </div>
         </div>
       )}
