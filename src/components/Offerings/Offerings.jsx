@@ -27,8 +27,7 @@ const initialData = [
   { id: 20, date: '2024-03-15', description: 'Item 20', user: 'Nike', amount: '₹65k' }
 ];
 
-
-const Expenditure = () => {
+const Offerings = () => {
   const [sampleData, setSampleData] = useState(initialData)
   const [selectedYear, setSelectedYear] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('');
@@ -159,7 +158,7 @@ const Expenditure = () => {
       <div className="px-2 py-6">
         <div className="flex flex-col justify-between md:flex-row">
         <div className="flex items-center space-x-2">
-            <p className="text-2xl font-bold">Expenditures</p>
+            <p className="text-2xl font-bold">Offerings</p>
             <button
               type="button"
               onClick={() => {
@@ -328,7 +327,7 @@ const Expenditure = () => {
   <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
     <div className="bg-white rounded-md p-6 shadow-lg w-11/12 md:w-1/2">
       <h2 className="text-lg font-bold mb-4">
-        {editingItem ? 'Edit Expenditure' : 'Add Expenditure'}
+        {editingItem ? 'Edit Offerings' : 'Add Offerings'}
       </h2>
       <Formik
         initialValues={{
@@ -413,4 +412,4 @@ const Expenditure = () => {
   );
 };
 
-export default Expenditure;
+export default Offerings;

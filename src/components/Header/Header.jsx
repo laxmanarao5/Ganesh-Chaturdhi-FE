@@ -1,27 +1,43 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { useLocation, Link } from 'react-router-dom'
 
-const menuItems = [
-  {
-    name: 'Home',
-    href: '/',
-  },
-  {
-    name: 'Expenditure',
-    href: '/expenditure',
-  },
-  {
-    name: 'Donations',
-    href: '/donations',
-  },
-]
+const initialMenuItems = [
+  { name: 'Home', href: '/' },
+  { name: 'Expenditure', href: '/expenditure' },
+  { name: 'Donations', href: '/donations' },
+  { name: 'Offerings', href: '/offerings' },
+  { name: 'Others', href: '/others' },
+];
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false)
   const location = useLocation()
+
+  // Set initial menu items in state
+  const [menuItems, setMenuItems] = useState(initialMenuItems);
+
+  useEffect(() => {
+    const userRole = localStorage.getItem('userRole');
+    console.log(menuItems, 'menu items');
+    console.log(userRole, 'user role')
+    if (userRole === 'Admin') {
+      setMenuItems(prevItems => {
+        // Check again within the callback to ensure no duplicate additions
+        const isUsersAdded = prevItems.some(item => item.name === 'Users');
+        console.log(isUsersAdded, 'item already added')
+        if (!isUsersAdded) {
+          return [
+            ...prevItems,
+            { name: 'Users', href: '/users' }
+          ];
+        }
+        return prevItems;
+      });
+    }
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)

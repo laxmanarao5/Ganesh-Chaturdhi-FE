@@ -27,14 +27,6 @@ const initialData = [
   { id: 20, date: '2024-03-15', description: 'Item 20', user: 'Nike', amount: '₹65k' }
 ];
 
-// Validation schema using Yup
-const validationSchema = Yup.object({
-  date: Yup.date().required('Date is required'),
-  description: Yup.string().required('Description is required'),
-  user: Yup.string().required('User is required'),
-  amount: Yup.string().required('Amount is required')
-});
-
 const Donations = () => {
   const [sampleData, setSampleData] = useState(initialData)
   const [selectedYear, setSelectedYear] = useState('');
@@ -46,9 +38,7 @@ const Donations = () => {
   const resultsPerPage = 5; // Number of results per page
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    date: '',
     description: '',
-    user: '',
     amount: ''
   });
   const [editingItem, setEditingItem] = useState(null);
@@ -104,33 +94,29 @@ const Donations = () => {
   }, [filteredResults]);
 
    // Form submission handler
-   const handleSubmit = (e) => {
-    e.preventDefault();
-    
+   const handleSubmit = (values) => {
     if (editingItem) {
-      // Update existing item
       const updatedData = sampleData.map(item =>
         item.id === editingItem.id
-          ? { ...item, ...formData } // Update the item with new form data
+          ? { ...item, description: values.description, amount: values.amount }
           : item
       );
-      setSampleData(() => updatedData);
-      setEditingItem(null); // Clear editing state
+      setSampleData(updatedData);
+      setEditingItem(null);
     } else {
-      // Add new item
       const newItem = {
-        id: sampleData.length + 1, // Simple ID generation logic
-        date: formData.date,
-        description: formData.description,
-        user: formData.user,
-        amount: formData.amount
+        id: sampleData.length + 1,
+        date: new Date().toISOString().slice(0, 10),
+        user: 'Admin',
+        description: values.description,
+        amount: values.amount
       };
       setSampleData([...sampleData, newItem]);
     }
-  
-    setIsModalOpen(false); // Close the modal after submission
-    setFormData({ date: '', description: '', user: '', amount: '' }); // Clear form data
-  };
+    
+    setIsModalOpen(false);
+  };  
+
 
   // Recalculate filtered results when sampleData or any filter criteria change
   useEffect(() => {
@@ -144,9 +130,9 @@ const Donations = () => {
     setIsModalOpen(true); // Open the modal for editing
     // Set form data with the item data
     setFormData({
-      date: item.date,
+      date: new Date().toISOString().slice(0, 10),
       description: item.description,
-      user: item.user,
+      user: 'Admin', // need to replace this with current user
       amount: item.amount
     });
   };
@@ -337,84 +323,67 @@ const Donations = () => {
         </div>
       </div>
       {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white rounded-md p-6 shadow-lg w-11/12 md:w-1/2">
-            <h2 className="text-lg font-bold mb-4">{editingItem ? 'Edit Expenditure' : 'Add Expenditure'}</h2>
-            <Formik
-              initialValues={{
-                date: editingItem?.date || '',
-                description: editingItem?.description || '',
-                user: editingItem?.user || '',
-                amount: editingItem?.amount || ''
-              }}
-              validationSchema={validationSchema}
-              onSubmit={handleSubmit}
-            >
-              {({ isSubmitting }) => (
-                <Form>
-                  <div className="mb-4">
-                    <label htmlFor="date" className="block text-sm font-semibold mb-2">Date</label>
-                    <Field
-                      type="date"
-                      id="date"
-                      name="date"
-                      className="border p-2 rounded w-full"
-                    />
-                    <ErrorMessage name="date" component="div" className="text-red-600 text-sm" />
-                  </div>
-                  <div className="mb-4">
-                    <label htmlFor="description" className="block text-sm font-semibold mb-2">Description</label>
-                    <Field
-                      type="text"
-                      id="description"
-                      name="description"
-                      className="border p-2 rounded w-full"
-                    />
-                    <ErrorMessage name="description" component="div" className="text-red-600 text-sm" />
-                  </div>
-                  <div className="mb-4">
-                    <label htmlFor="user" className="block text-sm font-semibold mb-2">User</label>
-                    <Field
-                      type="text"
-                      id="user"
-                      name="user"
-                      className="border p-2 rounded w-full"
-                    />
-                    <ErrorMessage name="user" component="div" className="text-red-600 text-sm" />
-                  </div>
-                  <div className="mb-4">
-                    <label htmlFor="amount" className="block text-sm font-semibold mb-2">Amount</label>
-                    <Field
-                      type="text"
-                      id="amount"
-                      name="amount"
-                      className="border p-2 rounded w-full"
-                    />
-                    <ErrorMessage name="amount" component="div" className="text-red-600 text-sm" />
-                  </div>
-                  <div className="flex justify-end">
-                    <button
-                      type="button"
-                      onClick={() => setIsModalOpen(false)}
-                      className="bg-gray-200 px-4 py-2 rounded mr-2"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="bg-black text-white px-4 py-2 rounded"
-                    >
-                      {editingItem ? 'Update' : 'Add'}
-                    </button>
-                  </div>
-                </Form>
-              )}
-            </Formik>
-          </div>
-        </div>
-      )}
+{isModalOpen && (
+  <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+    <div className="bg-white rounded-md p-6 shadow-lg w-11/12 md:w-1/2">
+      <h2 className="text-lg font-bold mb-4">
+        {editingItem ? 'Edit Donations' : 'Add Donations'}
+      </h2>
+      <Formik
+        initialValues={{
+          description: editingItem?.description || '',
+          amount: editingItem?.amount || ''
+        }}
+        validationSchema={Yup.object({
+          description: Yup.string().required('Description is required'),
+          amount: Yup.string().required('Amount is required'),
+        })}
+        onSubmit={handleSubmit}
+      >
+        {({ isSubmitting }) => (
+          <Form>
+            <div className="mb-4">
+              <label htmlFor="description" className="block text-sm font-semibold mb-2">Description</label>
+              <Field
+                type="text"
+                id="description"
+                name="description"
+                className="border p-2 rounded w-full"
+              />
+              <ErrorMessage name="description" component="div" className="text-red-600 text-sm" />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="amount" className="block text-sm font-semibold mb-2">Amount</label>
+              <Field
+                type="text"
+                id="amount"
+                name="amount"
+                className="border p-2 rounded w-full"
+              />
+              <ErrorMessage name="amount" component="div" className="text-red-600 text-sm" />
+            </div>
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="bg-gray-200 px-4 py-2 rounded mr-2"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-black text-white px-4 py-2 rounded"
+              >
+                {editingItem ? 'Update' : 'Add'}
+              </button>
+            </div>
+          </Form>
+        )}
+      </Formik>
+    </div>
+  </div>
+)}
       {isDeleteConfirmOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" onClick={cancelDelete}>
           <div className="bg-white p-4 rounded-md w-full max-w-md" onClick={(e) => e.stopPropagation()}>
