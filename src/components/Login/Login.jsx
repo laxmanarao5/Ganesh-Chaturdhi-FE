@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
@@ -14,10 +14,26 @@ const validationSchema = Yup.object({
 
 function Login() {
   let navigate = useNavigate();
+  const [response, setResponse] = useState(null)
+  const [error, setError] = useState(null)
 
-  const handleSubmit = (values) => {
+  const handleSubmit = async(values) => {
     console.log(values);
     navigate("/");
+    try{
+      //make request
+      let res=await axios.post("http://localhost:5002/login")
+      console.log(res)
+      if(res.status===200){
+        //if there is no error
+        setResponse(res.data.message)
+        setError("")
+      }
+    }catch(err){
+      //if there is error
+    console.log(err)
+    setError(err.response.data.message)
+    }
   };
 
   return (
