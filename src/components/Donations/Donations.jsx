@@ -158,7 +158,7 @@ const Donations = () => {
       <div className="px-2 py-6">
         <div className="flex flex-col justify-between md:flex-row">
         <div className="flex items-center space-x-2">
-            <p className="text-2xl font-bold">Donations</p>
+            <p className="text-2xl font-bold">Subscriptions</p>
             <button
               type="button"
               onClick={() => {
