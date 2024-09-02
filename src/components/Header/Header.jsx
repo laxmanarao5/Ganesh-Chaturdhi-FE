@@ -53,6 +53,11 @@ function Header() {
     navigate("/")
   }
 
+  const closeMenu = ()=>{
+    console.log('inside close menu')
+    setIsMenuOpen(false)
+  }
+
   return (
     <div className="relative w-full bg-gray-900 text-white">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 sm:px-6 lg:px-8">
@@ -139,6 +144,7 @@ function Header() {
                         key={item.name}
                         to={item.href}
                         className={`-m-3 flex items-center rounded-md p-3 text-sm font-semibold ${getLinkClass(item.href)}`}
+                        onClick={closeMenu}
                       >
                         <span className="ml-3 text-base font-medium">
                           {item.name}

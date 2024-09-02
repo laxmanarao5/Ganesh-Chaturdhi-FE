@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, SlidersHorizontal, Plus, Edit, Trash } from 'lucide-react';
+import { X, SlidersHorizontal, Plus, Edit, Trash, Rss } from 'lucide-react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { fetchUsers, filterResults, addExpenditure, editExpenditure } from '../../../api/api';
+import { fetchUsers, filterResults, addExpenditure, editExpenditure, deleteExpenditure } from '../../../api/api';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Expenditure.css'
@@ -37,8 +37,6 @@ const Expenditure = () => {
 
   const days = Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0'));
 
-  console.log(loading, 'loading')
-
   // Filter the data based on selected filters
   const handleFilter = async() => {
     try {
@@ -64,8 +62,9 @@ const Expenditure = () => {
       // });
       // setFilteredResults(filtered);
       setLoading(true)
-      let filteredResults = await filterResults(String(selectedYear),String(selectedMonth),String(selectedDay),'expenditure')
-      setFilteredResults(filteredResults)
+      let results = await filterResults(String(selectedYear),String(selectedMonth),String(selectedDay),'expenditure')
+      console.log(results, 'filtered results')
+      setFilteredResults(results)
       setCurrentPage(1); // Reset to first page when filters change
   } catch(error) {
     console.log(error, 'error')
@@ -93,13 +92,40 @@ const Expenditure = () => {
    const handleSubmit = async(values) => {
     try {
     if (editingItem) {
-      console.log(values, 'values')
       const item = {
-        amount: item.amount,
-        description: item.description,
+        amount: values.amount ? values.amount : editingItem.amount,
+        created_at: editingItem.created_at,
+        created_by: editingItem.created_by,
+        date: editingItem.date,
+        description: values.description ? values.description : editingItem.description,
+        id: editingItem.id,
+        user: editingItem.user
       }
       setLoading(true)
-      const res = await editExpenditure()
+      const res = await editExpenditure(item)
+      console.log(res, 'response in edit item')
+      if (res.status === 200) {
+        toast.success(res.data.message, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      } else {
+        toast.error('Failed to edit expenditure!', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
+      handleFilter()
       // setExpenditureData(updatedData);
       setEditingItem(null);
     } else {
@@ -112,11 +138,9 @@ const Expenditure = () => {
       };
       // hit the api
       setLoading(true)
-      const status = await addExpenditure(newItem)
-      console.log(status, 'status')
-      if (status === 200) {
-        console.log('inside the if block')
-        toast.success('Expenditure added successfully!', {
+      const res = await addExpenditure(newItem)
+      if (res.status === 200) {
+        toast.success(res.data.message, {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -190,10 +214,48 @@ const Expenditure = () => {
     setIsDeleteConfirmOpen(true); // Open delete confirmation dialog
   };
   
-  const confirmDelete = () => {
-    setExpenditureData(expenditureData.filter(item => item.id !== itemToDelete.id));
+  const confirmDelete = async() => {
+    try {
     setIsDeleteConfirmOpen(false);
+    const item = {
+      amount: itemToDelete.amount,
+      created_at: itemToDelete.created_at,
+      created_by: itemToDelete.created_by,
+      date: itemToDelete.date,
+      description: itemToDelete.description,
+      id: itemToDelete.id,
+      user: itemToDelete.user
+    }
+    setLoading(true)
+    const res = await deleteExpenditure(item)
+    if (res.status === 200) {
+      toast.success(res.data.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } else {
+      toast.error('Failed to delete expenditure!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
     setItemToDelete(null);
+    handleFilter()
+  } catch(error) {
+    console.log(error, 'error')
+  } finally {
+    setLoading(false)
+  }
   };
   
   const cancelDelete = () => {
