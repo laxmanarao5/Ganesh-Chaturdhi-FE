@@ -1,11 +1,11 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Menu, X } from 'lucide-react'
-import { useLocation, Link } from 'react-router-dom'
+import {Menu, X } from 'lucide-react'
+import { useLocation, Link, Navigate, useNavigate } from 'react-router-dom'
 
 const initialMenuItems = [
-  { name: 'Home', href: '/' },
+  { name: 'Home', href: '/home' },
   { name: 'Expenditure', href: '/expenditure' },
   { name: 'Donations', href: '/donations' },
   { name: 'Offerings', href: '/offerings' },
@@ -16,18 +16,17 @@ function Header() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false)
   const location = useLocation()
 
+  const navigate = useNavigate()
+
   // Set initial menu items in state
   const [menuItems, setMenuItems] = useState(initialMenuItems);
 
   useEffect(() => {
     const userRole = localStorage.getItem('userRole');
-    console.log(menuItems, 'menu items');
-    console.log(userRole, 'user role')
     if (userRole === 'Admin') {
       setMenuItems(prevItems => {
         // Check again within the callback to ensure no duplicate additions
         const isUsersAdded = prevItems.some(item => item.name === 'Users');
-        console.log(isUsersAdded, 'item already added')
         if (!isUsersAdded) {
           return [
             ...prevItems,
@@ -47,6 +46,11 @@ function Header() {
     return location.pathname === href
       ? 'text-sky-600 font-bold underline'
       : 'text-white hover:text-white-900 transition-transform duration-300 ease-in-out transform hover:scale-105'
+  }
+
+  const logOut = ()=>{
+    localStorage.clear()
+    navigate("/")
   }
 
   return (
@@ -87,6 +91,7 @@ function Header() {
           <button
             type="button"
             className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-black shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+            onClick={logOut}
           >
             Logout
           </button>
@@ -145,6 +150,7 @@ function Header() {
                 <button
                   type="button"
                   className="mt-4 w-full rounded-md bg-white px-3 py-2 text-sm font-semibold text-black shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                  onClick={logOut}
                 >
                   Logout
                 </button>
