@@ -3,6 +3,8 @@ import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import axios from 'axios'
+
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -18,16 +20,25 @@ function Login() {
   const [error, setError] = useState(null)
 
   const handleSubmit = async(values) => {
-    console.log(values);
     navigate("/");
     try{
       //make request
-      let res=await axios.post("http://localhost:5002/login")
-      console.log(res)
+      let res = await axios.post(
+        "https://b3pvkocb62.execute-api.us-east-1.amazonaws.com/dev/login",
+        values,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
       if(res.status===200){
         //if there is no error
+        localStorage.setItem('access_token', res.data.access_token)
+        localStorage.setItem('user_name', res.data.user.name)
         setResponse(res.data.message)
         setError("")
+        navigate("/home")
       }
     }catch(err){
       //if there is error
