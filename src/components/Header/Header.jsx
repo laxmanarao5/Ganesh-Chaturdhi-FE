@@ -10,6 +10,7 @@ const initialMenuItems = [
   { name: 'Donations', href: '/donations' },
   { name: 'Offerings', href: '/offerings' },
   { name: 'Others', href: '/others' },
+  { name: 'Reports', href: '/reports' },
 ];
 
 function Header() {

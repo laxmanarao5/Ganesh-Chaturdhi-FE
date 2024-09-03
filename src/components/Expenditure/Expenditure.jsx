@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { X, SlidersHorizontal, Plus, Edit, Trash, Rss } from 'lucide-react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { fetchUsers, filterResults, addExpenditure, editExpenditure, deleteExpenditure } from '../../../api/api';
+import { fetchUsers, filterResults } from '../../../api/common';
+import { addExpenditure, editExpenditure, deleteExpenditure } from '../../../api/expenditure';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Expenditure.css'
@@ -92,17 +93,12 @@ const Expenditure = () => {
    const handleSubmit = async(values) => {
     try {
     if (editingItem) {
-      const item = {
-        amount: values.amount ? values.amount : editingItem.amount,
-        created_at: editingItem.created_at,
-        created_by: editingItem.created_by,
-        date: editingItem.date,
-        description: values.description ? values.description : editingItem.description,
-        id: editingItem.id,
-        user: editingItem.user
-      }
+      // deep copy of editing Item
+      let editItem = JSON.parse(JSON.stringify(editingItem))
+      editItem.amount = values.amount ? values.amount : editItem.amount
+      editItem.description = values.description ? values.description : editItem.description
       setLoading(true)
-      const res = await editExpenditure(item)
+      const res = await editExpenditure(editItem)
       console.log(res, 'response in edit item')
       if (res.status === 200) {
         toast.success(res.data.message, {
@@ -130,14 +126,12 @@ const Expenditure = () => {
       setEditingItem(null);
     } else {
       const newItem = {
-        // id: expenditureData.length + 1,
-        date: new Date().toISOString().slice(0, 10),
-        user: localStorage.getItem('user_name'),
         description: values.description,
         amount: values.amount
       };
       // hit the api
       setLoading(true)
+      console.log(newItem)
       const res = await addExpenditure(newItem)
       if (res.status === 200) {
         toast.success(res.data.message, {
@@ -202,9 +196,7 @@ const Expenditure = () => {
     setIsModalOpen(true); // Open the modal for editing
     // Set form data with the item data
     setFormData({
-      date: new Date().toISOString().slice(0, 10),
       description: item.description,
-      user: 'Admin', // need to replace this with current user
       amount: item.amount
     });
   };
@@ -250,7 +242,7 @@ const Expenditure = () => {
       });
     }
     setItemToDelete(null);
-    handleFilter()
+    handleFilter
   } catch(error) {
     console.log(error, 'error')
   } finally {
@@ -285,7 +277,7 @@ const Expenditure = () => {
               <Plus className="mr-1 h-4 w-4" />
             </button>
           </div>
-          <div className="grid grid-cols-5 gap-x-6 gap-y-4">
+          <div className="ml-3 grid grid-cols-5 gap-x-6 gap-y-4">
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}

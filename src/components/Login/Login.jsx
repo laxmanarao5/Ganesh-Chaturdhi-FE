@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios'
+import './Login.css'
 
 
 const validationSchema = Yup.object({
@@ -18,11 +19,12 @@ function Login() {
   let navigate = useNavigate();
   const [response, setResponse] = useState(null)
   const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async(values) => {
-    navigate("/");
     try{
       //make request
+      setLoading(true)
       let res = await axios.post(
         "https://b3pvkocb62.execute-api.us-east-1.amazonaws.com/dev/login",
         values,
@@ -44,11 +46,18 @@ function Login() {
       //if there is error
     console.log(err)
     setError(err.response.data.message)
+    } finally {
+      setLoading(false)
     }
   };
 
   return (
     <section>
+      {loading && (
+        <div className="loader">
+          <div className="spinner"></div>
+        </div>
+      )}
       <div className="items-center justify-center px-4 py-10 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
         <div className="xl:mx-auto xl:w-full xl:max-w-sm 2xl:max-w-md">
           <div className="mb-2 flex justify-center">
