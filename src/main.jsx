@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
-import { Home, Expenditure, Donations, Layout, Login, Offerings, Others, Users } from './components/index.js';
+import { Home, Expenditure, Donations, Layout, Login, Offerings, Others, Users, Reports } from './components/index.js';
 import { createBrowserRouter, RouterProvider, Route, createRoutesFromElements } from 'react-router-dom';
 
 // setting current user as admin user
@@ -26,6 +26,7 @@ const router = createBrowserRouter(
         <Route path="donations" element={<Donations />} />
         <Route path="offerings" element={<Offerings />} />
         <Route path="others" element={<Others />} />
+        <Route path="reports" element={<Reports />} />
         {localStorage.getItem('userRole') === 'Admin' && (
           <Route path="users" element={<Users />} />
         )}
