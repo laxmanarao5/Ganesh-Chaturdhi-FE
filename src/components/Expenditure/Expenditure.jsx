@@ -48,9 +48,9 @@ const Expenditure = () => {
         setSelectedYear(currentDate[0])
         setSelectedMonth(currentDate[1])
         setSelectedDay(currentDate[2])
+        setFilteredResults([])
         let results = await filterResults(String(currentDate[0]),String(currentDate[1]),String(currentDate[2]),'expenditure')
         console.log(results, 'filtered results')
-        setFilteredResults([])
         setFilteredResults(results.data)
         setTotal(results.total)
         setCurrentPage(1); // Reset to first page
@@ -402,7 +402,7 @@ const Expenditure = () => {
               {currentResults.map((item,index) => (
                 <div key={item.id} className="border p-4 rounded-md bg-white shadow-md flex justify-between items-center">
                   <div>
-                    <p>Sl no: {index+1}</p>
+                    <p>Sl No: {index+1}</p>
                     <p>Description: {item.description}</p>
                     <p>Amount: {item.amount}</p>
                     <p>User: {item.created_by}</p>

@@ -1,16 +1,34 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+import { fetchUsers, filterResults } from '../../../api/common';
 
 function Home() {
-    const data = [
-        {
-          name: 'Donations',
-          amount: 1000
-        },
-        {
-            name: 'Expenditure',
-            amount: 200
-        },
-      ]
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    // Define an async function inside useEffect
+    const fetchData = async () => {
+      try {
+  
+        let results = await filterResults(String(2024),String(''),String(''),'expenditure')
+        const data2 = [
+          {
+            name: 'Subscriptions',
+            amount: 0
+          },
+          {
+              name: 'Expenditure',
+              amount: results.total
+          },
+        ]
+       setData(data2)
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      } finally {
+        setLoading(false)
+      }
+    };
+  
+    fetchData(); // Call the async function
+  }, []);
   return (
     <>
       <section className="mx-auto w-full max-w-7xl px-4 py-4">
