@@ -262,7 +262,7 @@ const Offerings = () => {
         <div className="flex flex-col justify-between md:flex-row">
         <div className="flex items-center space-x-2">
             <p className="text-2xl font-bold">Offerings</p>
-            <button
+            {localStorage.getItem('user_role') === 'Admin' && <button
               type="button"
               onClick={() => {
                 setIsModalOpen(true)
@@ -271,7 +271,8 @@ const Offerings = () => {
               className="text-sm font-semibold bg-black text-white px-3 py-1 rounded flex items-center"
             >
               <Plus className="mr-1 h-4 w-4" />
-            </button>
+            </button> 
+            }
           </div>
           <div className="ml-3 grid grid-cols-5 gap-x-6 gap-y-4">
             <select
