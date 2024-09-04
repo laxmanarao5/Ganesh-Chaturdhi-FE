@@ -16,6 +16,7 @@ const Others = () => {
   const [selectedUser, setSelectedUser] = useState('');
   const [filteredResults, setFilteredResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const resultsPerPage = 5; // Number of results per page
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -42,15 +43,23 @@ const Others = () => {
   const handleFilter = async() => {
     try {
       if (!selectedYear && !selectedMonth && !selectedDay && !selectedUser) {
-        // If no filters are selected, clear the filteredResults
-        setFilteredResults([]);
-        setCurrentPage(1); // Reset to first page
+        const currentDate = new Date().toISOString().slice(0, 10).split("-")
+        setSelectedYear(currentDate[0])
+        setSelectedMonth(currentDate[1])
+        setSelectedDay(currentDate[2])
+        setFilteredResults([])
+        let results = await filterResults(String(currentDate[0]),String(currentDate[1]),String(currentDate[2]),'others')
+        console.log(results, 'filtered results')
+        setFilteredResults(results.data)
+        setTotal(results.total)
+        setCurrentPage(1); // Reset to first page// Reset to first page
         return;
       }
       setLoading(true)
       let results = await filterResults(String(selectedYear),String(selectedMonth),String(selectedDay),'others')
       console.log(results, 'filtered results')
-      setFilteredResults(results)
+      setFilteredResults(results.data)
+      setTotal(results.total)
       setCurrentPage(1); // Reset to first page when filters change
   } catch(error) {
     console.log(error, 'error')

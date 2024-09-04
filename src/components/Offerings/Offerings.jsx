@@ -16,6 +16,7 @@ const Offerings = () => {
   const [selectedUser, setSelectedUser] = useState('');
   const [filteredResults, setFilteredResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const resultsPerPage = 5; // Number of results per page
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -43,14 +44,23 @@ const Offerings = () => {
     try {
       if (!selectedYear && !selectedMonth && !selectedDay && !selectedUser) {
         // If no filters are selected, clear the filteredResults
-        setFilteredResults([]);
+        const currentDate = new Date().toISOString().slice(0, 10).split("-")
+        setSelectedYear(currentDate[0])
+        setSelectedMonth(currentDate[1])
+        setSelectedDay(currentDate[2])
+        setFilteredResults([])
+        let results = await filterResults(String(currentDate[0]),String(currentDate[1]),String(currentDate[2]),'offerings')
+        console.log(results, 'filtered results')
+        setFilteredResults(results.data)
+        setTotal(results.total)
         setCurrentPage(1); // Reset to first page
         return;
       }
       setLoading(true)
       let results = await filterResults(String(selectedYear),String(selectedMonth),String(selectedDay),'offerings')
       console.log(results, 'filtered results')
-      setFilteredResults(results)
+      setFilteredResults(results.data)
+      setTotal(results.total)
       setCurrentPage(1); // Reset to first page when filters change
   } catch(error) {
     console.log(error, 'error')
@@ -370,6 +380,7 @@ const Offerings = () => {
         </div>
       </div>
       <div className="px-2 py-6">
+      <div className='pt-3 pl-3'>Total amount : {total} </div>
         <div className="space-y-4">
           {filteredResults.length > 0 ? (
             <>
@@ -377,10 +388,10 @@ const Offerings = () => {
               {currentResults.map((item,index) => (
                 <div key={item.id} className="border p-4 rounded-md bg-white shadow-md flex justify-between items-center">
                   <div>
-                    <p>Sl no: {index+1}</p>
+                    <p>Sl No: {index+1}</p>
                     <p>Description: {item.description}</p>
                     <p>Name: {item.name}</p>
-                    <p>Amount/Quantity: {item.amount}</p>
+                    <p>Amount: {item.amount}</p>
                     <p>User: {item.created_by}</p>
                     <p>Date: {new Date(item.created_at).toISOString()}</p>
                   </div>

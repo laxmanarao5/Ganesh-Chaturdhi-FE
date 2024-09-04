@@ -7,8 +7,8 @@ import { useLocation, Link, Navigate, useNavigate } from 'react-router-dom'
 const initialMenuItems = [
   { name: 'Home', href: '/home' },
   { name: 'Expenditure', href: '/expenditure' },
-  { name: 'Subscriptions', href: '/donations' },
-  { name: 'Offerings', href: '/offerings' },
+  { name: 'Donations', href: '/donations' },
+  { name: 'Annadhanam', href: '/offerings' },
   { name: 'Others', href: '/others' },
   { name: 'Reports', href: '/reports' },
 ];

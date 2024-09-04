@@ -11,7 +11,7 @@ function Home() {
         let results = await filterResults(String(2024),String(''),String(''),'expenditure')
         const data2 = [
           {
-            name: 'Subscriptions',
+            name: 'Donations',
             amount: 0
           },
           {
