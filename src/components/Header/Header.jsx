@@ -7,7 +7,7 @@ import { useLocation, Link, Navigate, useNavigate } from 'react-router-dom'
 const initialMenuItems = [
   { name: 'Home', href: '/home' },
   { name: 'Expenditure', href: '/expenditure' },
-  { name: 'Donations', href: '/donations' },
+  { name: 'Subscriptions', href: '/donations' },
   { name: 'Offerings', href: '/offerings' },
   { name: 'Others', href: '/others' },
   { name: 'Reports', href: '/reports' },
@@ -23,7 +23,7 @@ function Header() {
   const [menuItems, setMenuItems] = useState(initialMenuItems);
 
   useEffect(() => {
-    const userRole = localStorage.getItem('userRole');
+    const userRole = localStorage.getItem('user_role');
     if (userRole === 'Admin') {
       setMenuItems(prevItems => {
         // Check again within the callback to ensure no duplicate additions

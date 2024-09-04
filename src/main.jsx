@@ -4,9 +4,6 @@ import './index.css';
 import { Home, Expenditure, Donations, Layout, Login, Offerings, Others, Users, Reports } from './components/index.js';
 import { createBrowserRouter, RouterProvider, Route, createRoutesFromElements } from 'react-router-dom';
 
-// setting current user as admin user
-localStorage.setItem('userRole', 'Admin')
-
 let isLoggedIn
 // get logged in user token
 let token = localStorage.getItem('access_token')
@@ -27,7 +24,7 @@ const router = createBrowserRouter(
         <Route path="offerings" element={<Offerings />} />
         <Route path="others" element={<Others />} />
         <Route path="reports" element={<Reports />} />
-        {localStorage.getItem('userRole') === 'Admin' && (
+        {localStorage.getItem('user_role') === 'Admin' && (
           <Route path="users" element={<Users />} />
         )}
       </Route>
