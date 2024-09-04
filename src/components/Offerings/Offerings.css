@@ -1,0 +1,53 @@
+.loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.7); /* Optional: Adds a white overlay */
+  }
+  
+  .spinner {
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 8px solid #000; /* Black */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  } 
+  
+/* General dropdown styles */
+select {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* Mobile view adjustments */
+@media (max-width: 640px) {
+  .grid-cols-5 {
+    grid-template-columns: repeat(2, 1fr); /* Adjust the grid to show dropdowns in two columns */
+    gap: 4px; /* Decrease the gap between items */
+  }
+
+  select {
+    font-size: 14px; /* Adjust font size for better readability */
+    padding: 6px; /* Decrease padding to fit better */
+  }
+}
+

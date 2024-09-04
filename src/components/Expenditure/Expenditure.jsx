@@ -397,7 +397,7 @@ const Expenditure = () => {
                     <p>User: {item.created_by}</p>
                     <p>Date: {item.created_at}</p>
                   </div>
-                  <div className="flex space-x-2">
+                  {localStorage.getItem('user_role') === 'Admin' && (<div className="flex space-x-2">
                     <button
                       onClick={() => handleEdit(item)}
                       className="text-blue-500 hover:text-blue-700"
@@ -410,7 +410,7 @@ const Expenditure = () => {
                     >
                       <Trash className="h-5 w-5" />
                     </button>
-                  </div>
+                  </div>)}
                 </div>
               ))}
               </div>
@@ -431,8 +431,8 @@ const Expenditure = () => {
           )}
         </div>
       </div>
-      {/* Modal */}
       <ToastContainer />
+      {/* Modal */}
 {isModalOpen && (
   <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
     <div className="bg-white rounded-md p-6 shadow-lg w-11/12 md:w-1/2">

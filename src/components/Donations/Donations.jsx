@@ -254,7 +254,7 @@ const Donations = () => {
       <div className="px-2 py-6">
         <div className="flex flex-col justify-between md:flex-row">
         <div className="flex items-center space-x-2">
-            <p className="text-2xl font-bold">Donations</p>
+            <p className="text-2xl font-bold">Subscriptions</p>
             <button
               type="button"
               onClick={() => {
@@ -394,12 +394,12 @@ const Donations = () => {
                 <div key={item.id} className="border p-4 rounded-md bg-white shadow-md flex justify-between items-center">
                   <div>
                     <p>Sl no: {index+1}</p>
-                    <p>Description: {item.description}</p>
+                    <p>Name: {item.description}</p>
                     <p>Amount: {item.amount}</p>
                     <p>User: {item.created_by}</p>
                     <p>Date: {item.created_at}</p>
                   </div>
-                  <div className="flex space-x-2">
+                  {localStorage.getItem('user_role') === 'Admin' && (<div className="flex space-x-2">
                     <button
                       onClick={() => handleEdit(item)}
                       className="text-blue-500 hover:text-blue-700"
@@ -412,7 +412,7 @@ const Donations = () => {
                     >
                       <Trash className="h-5 w-5" />
                     </button>
-                  </div>
+                  </div>)}
                 </div>
               ))}
               </div>
@@ -448,7 +448,7 @@ const Donations = () => {
           category: editingItem?.category || ''
         }}
         validationSchema={Yup.object({
-          description: Yup.string().required('Description is required'),
+          description: Yup.string().required('Name is required'),
           amount: Yup.string().required('Amount is required'),
           category: Yup.string().required('Category is required'),
         })}
@@ -472,7 +472,7 @@ const Donations = () => {
               <ErrorMessage name="category" component="div" className="text-red-600 text-sm" />
             </div>
             <div className="mb-4">
-              <label htmlFor="description" className="block text-sm font-semibold mb-2">Description</label>
+              <label htmlFor="description" className="block text-sm font-semibold mb-2">Name</label>
               <Field
                 type="text"
                 id="description"

@@ -38,6 +38,7 @@ function Login() {
         //if there is no error
         localStorage.setItem('access_token', res.data.access_token)
         localStorage.setItem('user_name', res.data.user.name)
+        localStorage.setItem('user_role', res.data.user.role)
         setResponse(res.data.message)
         setError("")
         navigate("/home")
