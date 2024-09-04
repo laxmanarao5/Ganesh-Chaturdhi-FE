@@ -15,6 +15,7 @@ const Expenditure = () => {
   const [selectedDay, setSelectedDay] = useState('');
   const [selectedUser, setSelectedUser] = useState('');
   const [filteredResults, setFilteredResults] = useState([]);
+  const [total, setTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const resultsPerPage = 5; // Number of results per page
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,7 +44,15 @@ const Expenditure = () => {
     try {
       if (!selectedYear && !selectedMonth && !selectedDay && !selectedUser) {
         // If no filters are selected, clear the filteredResults
-        setFilteredResults([]);
+        const currentDate = new Date().toISOString().slice(0, 10).split("-")
+        setSelectedYear(currentDate[0])
+        setSelectedMonth(currentDate[1])
+        setSelectedDay(currentDate[2])
+        let results = await filterResults(String(currentDate[0]),String(currentDate[1]),String(currentDate[2]),'expenditure')
+        console.log(results, 'filtered results')
+        setFilteredResults([])
+        setFilteredResults(results.data)
+        setTotal(results.total)
         setCurrentPage(1); // Reset to first page
         return;
       }
@@ -65,7 +74,8 @@ const Expenditure = () => {
       setLoading(true)
       let results = await filterResults(String(selectedYear),String(selectedMonth),String(selectedDay),'expenditure')
       console.log(results, 'filtered results')
-      setFilteredResults(results)
+      setFilteredResults(results.data)
+      setTotal(results.total)
       setCurrentPage(1); // Reset to first page when filters change
   } catch(error) {
     console.log(error, 'error')
@@ -383,6 +393,7 @@ const Expenditure = () => {
           </div>
         </div>
       </div>
+      <div className='pt-3 pl-3'>Total amount : {total} </div>
       <div className="px-2 py-6">
         <div className="space-y-4">
           {filteredResults.length > 0 ? (
