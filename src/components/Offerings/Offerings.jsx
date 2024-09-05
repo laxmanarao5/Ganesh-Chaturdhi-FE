@@ -7,6 +7,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Offerings.css'
 import { addOffering, deleteOffering, editOffering } from '../../../api/offerings';
+import { convertIsoToCustomFormat } from '../../common/timeZoneConvertor';
+import { years } from '../../constants/years';
 
 const Offerings = () => {
   const [offeringsData, setOfferingsData] = useState(null)
@@ -28,7 +30,6 @@ const Offerings = () => {
   const [itemToDelete, setItemToDelete] = useState(null);
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(false);
-  const years = [2024, 2023, 2022]; // You can add more years as needed
   
   const monthAbbreviations = [
     { value: '01', label: 'Jan' }, { value: '02', label: 'Feb' }, { value: '03', label: 'Mar' },
@@ -95,7 +96,6 @@ const Offerings = () => {
       editItem.name = values.name ? values.name : editItem.name
       setLoading(true)
       const res = await editOffering(editItem)
-      console.log(res, 'response in edit item')
       if (res.status === 200) {
         toast.success(res.data.message, {
           position: "top-right",
@@ -127,7 +127,6 @@ const Offerings = () => {
       };
       // hit the api
       setLoading(true)
-      console.log(newItem)
       const res = await addOffering(newItem)
       if (res.status === 200) {
         toast.success(res.data.message, {
@@ -187,7 +186,6 @@ const Offerings = () => {
   
 
   const handleEdit = (item) => {
-    console.log(item, 'edit item')
     setEditingItem(item); // Set the item to edit
     setIsModalOpen(true); // Open the modal for editing
     // Set form data with the item data
@@ -249,7 +247,8 @@ const Offerings = () => {
   const cancelDelete = () => {
     setIsDeleteConfirmOpen(false);
     setItemToDelete(null);
-  };  
+  }; 
+  
 
   return (
     <div className="mx-auto w-full max-w-4xl">
@@ -280,7 +279,7 @@ const Offerings = () => {
               onChange={(e) => setSelectedYear(e.target.value)}
               className="flex items-center justify-center text-sm font-semibold border p-2 rounded"
             >
-              <option value="">Year</option>
+              <option value="" disabled>Year</option>
               {years.map(y => (
                 <option key={y} value={y}>{y}</option>
               ))}
@@ -291,7 +290,7 @@ const Offerings = () => {
               className="flex items-center justify-center text-sm font-semibold border p-2 rounded"
               disabled={!selectedYear}
             >
-              <option value="">Month</option>
+              <option value="" disabled>Month</option>
               {monthAbbreviations.map(month => (
                 <option key={month.value} value={month.value}>
                   {month.label}
@@ -304,7 +303,7 @@ const Offerings = () => {
               className="flex items-center justify-center text-sm font-semibold border p-2 rounded"
               disabled={!selectedMonth}
             >
-              <option value="">Day</option>
+              <option value="" disabled>Day</option>
               {days.map(d => (
                 <option key={d} value={d}>{d}</option>
               ))}
@@ -315,7 +314,7 @@ const Offerings = () => {
               className="flex items-center justify-center text-sm font-semibold border p-2 rounded"
               disabled={!selectedYear}
             >
-              <option value="">User</option>
+              <option value="" disabled>User</option>
               {users.map(u => (
                 <option key={u.user_id} value={u.name}>{u.name}</option>
               ))}
@@ -389,12 +388,12 @@ const Offerings = () => {
               {currentResults.map((item,index) => (
                 <div key={item.id} className="border p-4 rounded-md bg-white shadow-md flex justify-between items-center">
                   <div>
-                    <p>Sl No: {index+1}</p>
+                    <p>Sl no: {indexOfFirstResult + index + 1}</p>
                     <p>Description: {item.description}</p>
                     <p>Name: {item.name}</p>
                     <p>Amount: {item.amount}</p>
                     <p>User: {item.created_by}</p>
-                    <p>Date: {new Date(item.created_at).toISOString()}</p>
+                    <p>Date: {convertIsoToCustomFormat(item.created_at)}</p>
                   </div>
                   {localStorage.getItem('user_role') === 'Admin' && (<div className="flex space-x-2">
                     <button

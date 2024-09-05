@@ -1,0 +1,1 @@
+export const categories = ['Pooja', 'Annadhanam', 'Entertainment','Rent']
