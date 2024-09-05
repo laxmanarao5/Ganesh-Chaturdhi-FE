@@ -57,3 +57,18 @@ select {
   background-color: #6050c8 !important; 
   color: white !important; 
 } */
+
+.highlight-text {
+  font-weight: bold; /* Highlight the label */
+  color: #333; /* You can adjust the color to match your design */
+}
+
+.total-amount-badge {
+  background-color: #007bff; /* Blue background color */
+  color: white; /* White text */
+  padding: 5px 10px; /* Adjust padding as needed */
+  border-radius: 20px; /* Rounded shape */
+  font-weight: bold; /* Bold text */
+  margin-left: 10px; /* Space between label and value */
+  display: inline-block; /* Keep it inline with the label */
+}
