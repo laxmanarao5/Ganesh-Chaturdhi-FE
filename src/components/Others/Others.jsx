@@ -50,7 +50,6 @@ const Others = () => {
         setSelectedDay(currentDate[2])
         setFilteredResults([])
         let results = await filterResults(String(currentDate[0]),String(currentDate[1]),String(currentDate[2]),'others',String(selectedUser))
-        console.log(results, 'filtered results')
         setFilteredResults(results.data)
         setTotal(results.total)
         setCurrentPage(1); // Reset to first page// Reset to first page
@@ -58,7 +57,6 @@ const Others = () => {
       }
       setLoading(true)
       let results = await filterResults(String(selectedYear),String(selectedMonth),String(selectedDay),'others')
-      console.log(results, 'filtered results')
       setFilteredResults(results.data)
       setTotal(results.total)
       setCurrentPage(1); // Reset to first page when filters change
