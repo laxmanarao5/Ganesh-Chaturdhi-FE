@@ -395,7 +395,10 @@ const Expenditure = () => {
           </div>
         </div>
       </div>
-      <div className='pt-3 pl-3'>Total amount : {total} </div>
+      <div className='pt-3 pl-3'>
+        <span className='highlight-text'>Total amount :</span>
+        <span className='total-amount-badge'>{total}</span>
+      </div>
       <div className="px-2 py-6">
         <div className="space-y-4">
           {filteredResults.length > 0 ? (

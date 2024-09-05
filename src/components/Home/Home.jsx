@@ -1,25 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { fetchUsers, filterResults } from '../../../api/common';
+import { filterResults } from '../../../api/common';
+import { getHomePageData } from '../../../api/home';
 
 function Home() {
-  const [data, setData] = useState([]);
+  const [homeData, setHomeData] = useState([])
+  const [loading, setLoading] = useState(false)
+
   useEffect(() => {
     // Define an async function inside useEffect
     const fetchData = async () => {
       try {
-  
-        let results = await filterResults(String(2024),String(''),String(''),'expenditure')
-        const data2 = [
-          {
-            name: 'Donations',
-            amount: 0
-          },
-          {
-              name: 'Expenditure',
-              amount: results.total
-          },
-        ]
-       setData(data2)
+        setLoading(true)
+        let results = await getHomePageData()
+        setHomeData(results)
       } catch (error) {
         console.error('Error fetching users:', error);
       } finally {
@@ -27,11 +20,16 @@ function Home() {
       }
     };
   
-    fetchData(); // Call the async function
+    fetchData();
   }, []);
   return (
     <>
       <section className="mx-auto w-full max-w-7xl px-4 py-4">
+      {loading && (
+        <div className="loader">
+          <div className="spinner"></div>
+        </div>
+      )}
         <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
           <div>
             <h2 className="text-lg font-semibold">Expenditures And Donations</h2>
@@ -63,13 +61,13 @@ function Home() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
-                    {data.map((data) => (
-                      <tr key={data.name}>
+                    {homeData.map((data) => (
+                      <tr key={data.header}>
                         <td className="whitespace-nowrap px-12 py-4">
-                          <div className="text-sm text-gray-700">{data.name}</div>
+                          <div className="text-sm text-gray-700">{data.header}</div>
                         </td>
                         <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-700">
-                          {data.amount}
+                          {data.value}
                         </td>
                       </tr>
                     ))}
