@@ -7,6 +7,10 @@ import { addExpenditure, editExpenditure, deleteExpenditure } from '../../../api
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Expenditure.css'
+import { convertIsoToCustomFormat } from '../../common/timeZoneConvertor';
+import { years } from '../../constants/years';
+import { categories } from '../../constants/expenditure';
+
 
 const Expenditure = () => {
   const [expenditureData, setExpenditureData] = useState(null)
@@ -27,8 +31,8 @@ const Expenditure = () => {
   const [itemToDelete, setItemToDelete] = useState(null);
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(false);
-  const years = [2024, 2023, 2022]; // You can add more years as needed
-  
+  const [selectedCategory, setCategory] = useState('')
+
   const monthAbbreviations = [
     { value: '01', label: 'Jan' }, { value: '02', label: 'Feb' }, { value: '03', label: 'Mar' },
     { value: '04', label: 'Apr' }, { value: '05', label: 'May' }, { value: '06', label: 'Jun' },
@@ -97,9 +101,9 @@ const Expenditure = () => {
       let editItem = JSON.parse(JSON.stringify(editingItem))
       editItem.amount = values.amount ? values.amount : editItem.amount
       editItem.description = values.description ? values.description : editItem.description
+      editItem.category = values.category ? values.category : editItem.category
       setLoading(true)
       const res = await editExpenditure(editItem)
-      console.log(res, 'response in edit item')
       if (res.status === 200) {
         toast.success(res.data.message, {
           position: "top-right",
@@ -109,6 +113,7 @@ const Expenditure = () => {
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
+          className: 'toast-success',
         });
       } else {
         toast.error('Failed to edit expenditure!', {
@@ -127,11 +132,11 @@ const Expenditure = () => {
     } else {
       const newItem = {
         description: values.description,
-        amount: values.amount
+        amount: values.amount,
+        category: values.category
       };
       // hit the api
       setLoading(true)
-      console.log(newItem)
       const res = await addExpenditure(newItem)
       if (res.status === 200) {
         toast.success(res.data.message, {
@@ -142,6 +147,7 @@ const Expenditure = () => {
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
+          className: 'toast-success',
         });
       } else {
         toast.error('Failed to add expenditure!', {
@@ -191,7 +197,6 @@ const Expenditure = () => {
   
 
   const handleEdit = (item) => {
-    console.log(item, 'edit item')
     setEditingItem(item); // Set the item to edit
     setIsModalOpen(true); // Open the modal for editing
     // Set form data with the item data
@@ -229,6 +234,7 @@ const Expenditure = () => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
+        className: 'toast-success',
       });
     } else {
       toast.error('Failed to delete expenditure!', {
@@ -266,7 +272,7 @@ const Expenditure = () => {
         <div className="flex flex-col justify-between md:flex-row">
         <div className="flex items-center space-x-2">
             <p className="text-2xl font-bold">Expenditures</p>
-            <button
+            {localStorage.getItem('user_role') === 'Admin' && (<button
               type="button"
               onClick={() => {
                 setIsModalOpen(true)
@@ -275,7 +281,7 @@ const Expenditure = () => {
               className="text-sm font-semibold bg-black text-white px-3 py-1 rounded flex items-center"
             >
               <Plus className="mr-1 h-4 w-4" />
-            </button>
+            </button>)}
           </div>
           <div className="ml-3 grid grid-cols-5 gap-x-6 gap-y-4">
             <select
@@ -283,7 +289,7 @@ const Expenditure = () => {
               onChange={(e) => setSelectedYear(e.target.value)}
               className="flex items-center justify-center text-sm font-semibold border p-2 rounded"
             >
-              <option value="">Year</option>
+              <option value="" disabled>Year</option>
               {years.map(y => (
                 <option key={y} value={y}>{y}</option>
               ))}
@@ -294,7 +300,7 @@ const Expenditure = () => {
               className="flex items-center justify-center text-sm font-semibold border p-2 rounded"
               disabled={!selectedYear}
             >
-              <option value="">Month</option>
+              <option value="" disabled>Month</option>
               {monthAbbreviations.map(month => (
                 <option key={month.value} value={month.value}>
                   {month.label}
@@ -307,7 +313,7 @@ const Expenditure = () => {
               className="flex items-center justify-center text-sm font-semibold border p-2 rounded"
               disabled={!selectedMonth}
             >
-              <option value="">Day</option>
+              <option value="" disabled>Day</option>
               {days.map(d => (
                 <option key={d} value={d}>{d}</option>
               ))}
@@ -318,18 +324,31 @@ const Expenditure = () => {
               className="flex items-center justify-center text-sm font-semibold border p-2 rounded"
               disabled={!selectedYear}
             >
-              <option value="">User</option>
+              <option value="" disabled>User</option>
               {users.map(u => (
                 <option key={u.user_id} value={u.name}>{u.name}</option>
               ))}
             </select>
-            <button
-              type="button"
-              onClick={handleFilter}
-              className="hidden md:flex items-center justify-center text-sm font-semibold bg-black text-white px-4 py-2 rounded"
+            <select
+              value={selectedCategory}
+              onChange={(e) => setCategory(e.target.value)}
+              className="flex items-center justify-center text-sm font-semibold border p-2 rounded"
+              disabled={!selectedYear}
             >
-              Filter
-            </button>
+              <option value="" disabled>Category</option>
+              {categories.map(y => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </select>
+            <div className="col-span-full flex justify-center">
+              <button
+                type="button"
+                onClick={handleFilter}
+                className="hidden md:flex items-center justify-center text-sm font-semibold bg-black text-white px-6 py-2 rounded lg:px-8"
+              >
+                Filter
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -391,11 +410,12 @@ const Expenditure = () => {
               {currentResults.map((item,index) => (
                 <div key={item.id} className="border p-4 rounded-md bg-white shadow-md flex justify-between items-center">
                   <div>
-                    <p>Sl no: {index+1}</p>
+                    <p>Sl no: {indexOfFirstResult + index + 1}</p>
+                    <p>Category: {item.category}</p>
                     <p>Description: {item.description}</p>
                     <p>Amount: {item.amount}</p>
                     <p>User: {item.created_by}</p>
-                    <p>Date: {item.created_at}</p>
+                    <p>Date: {convertIsoToCustomFormat(item.created_at)}</p>
                   </div>
                   {localStorage.getItem('user_role') === 'Admin' && (<div className="flex space-x-2">
                     <button
@@ -442,16 +462,33 @@ const Expenditure = () => {
       <Formik
         initialValues={{
           description: editingItem?.description || '',
-          amount: editingItem?.amount || ''
+          amount: editingItem?.amount || '',
+          category: editingItem?.category || categories[0]
         }}
         validationSchema={Yup.object({
           description: Yup.string().required('Description is required'),
           amount: Yup.string().required('Amount is required'),
+          category: Yup.string().required('Category is required'),
         })}
         onSubmit={handleSubmit}
       >
         {({ isSubmitting }) => (
           <Form>
+            <div className="mb-4">
+              <label htmlFor="category" className="block text-sm font-semibold mb-2">Category</label>
+              <Field
+                as="select"
+                id="category"
+                name="category"
+                className="flex items-center justify-center text-sm font-semibold border p-2 rounded w-full"
+              >
+                <option value="" disabled>Category</option>
+                {categories.map(y => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </Field>
+              <ErrorMessage name="category" component="div" className="text-red-600 text-sm" />
+            </div>
             <div className="mb-4">
               <label htmlFor="description" className="block text-sm font-semibold mb-2">Description</label>
               <Field

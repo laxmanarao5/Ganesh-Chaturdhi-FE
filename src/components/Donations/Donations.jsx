@@ -8,6 +8,9 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Donations.css'
 import { categories } from '../../constants/donations';
+import { convertIsoToCustomFormat } from '../../common/timeZoneConvertor';
+import { years } from '../../constants/years';
+
 
 const Donations = () => {
   const [donationsData, setDonationsData] = useState(null)
@@ -29,7 +32,6 @@ const Donations = () => {
   const [itemToDelete, setItemToDelete] = useState(null);
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(false);
-  const years = [2024, 2023, 2022]; // You can add more years as needed
   
   const monthAbbreviations = [
     { value: '01', label: 'Jan' }, { value: '02', label: 'Feb' }, { value: '03', label: 'Mar' },
@@ -111,7 +113,6 @@ const Donations = () => {
       handleFilter()
       setEditingItem(null);
     } else {
-      console.log(values, 'values')
       const newItem = {
         description: values.description,
         amount: values.amount,
@@ -178,7 +179,6 @@ const Donations = () => {
   
 
   const handleEdit = (item) => {
-    console.log(item, 'edit item')
     setEditingItem(item); // Set the item to edit
     setIsModalOpen(true); // Open the modal for editing
     // Set form data with the item data
@@ -272,7 +272,7 @@ const Donations = () => {
               onChange={(e) => setSelectedYear(e.target.value)}
               className="flex items-center justify-center text-sm font-semibold border p-2 rounded"
             >
-              <option value="">Year</option>
+              <option value="" disabled>Year</option>
               {years.map(y => (
                 <option key={y} value={y}>{y}</option>
               ))}
@@ -283,7 +283,7 @@ const Donations = () => {
               className="flex items-center justify-center text-sm font-semibold border p-2 rounded"
               disabled={!selectedYear}
             >
-              <option value="">Month</option>
+              <option value="" disabled>Month</option>
               {monthAbbreviations.map(month => (
                 <option key={month.value} value={month.value}>
                   {month.label}
@@ -296,7 +296,7 @@ const Donations = () => {
               className="flex items-center justify-center text-sm font-semibold border p-2 rounded"
               disabled={!selectedMonth}
             >
-              <option value="">Day</option>
+              <option value="" disabled>Day</option>
               {days.map(d => (
                 <option key={d} value={d}>{d}</option>
               ))}
@@ -307,7 +307,7 @@ const Donations = () => {
               className="flex items-center justify-center text-sm font-semibold border p-2 rounded"
               disabled={!selectedYear}
             >
-              <option value="">User</option>
+              <option value="" disabled>User</option>
               {users.map(u => (
                 <option key={u.user_id} value={u.name}>{u.name}</option>
               ))}
@@ -318,7 +318,7 @@ const Donations = () => {
               className="flex items-center justify-center text-sm font-semibold border p-2 rounded"
               disabled={!selectedYear}
             >
-              <option value="">Category</option>
+              <option value="" disabled>Category</option>
               {categories.map(y => (
                 <option key={y} value={y}>{y}</option>
               ))}
@@ -393,11 +393,11 @@ const Donations = () => {
               {currentResults.map((item,index) => (
                 <div key={item.id} className="border p-4 rounded-md bg-white shadow-md flex justify-between items-center">
                   <div>
-                    <p>Sl no: {index+1}</p>
+                    <p>Sl no: {indexOfFirstResult + index + 1}</p>
                     <p>Name: {item.description}</p>
                     <p>Amount: {item.amount}</p>
                     <p>User: {item.created_by}</p>
-                    <p>Date: {item.created_at}</p>
+                    <p>Date: {convertIsoToCustomFormat(item.created_at)}</p>
                   </div>
                   {localStorage.getItem('user_role') === 'Admin' && (<div className="flex space-x-2">
                     <button
@@ -464,7 +464,7 @@ const Donations = () => {
                 name="category"
                 className="flex items-center justify-center text-sm font-semibold border p-2 rounded w-full"
               >
-                <option value="">Category</option>
+                <option value="" disabled>Category</option>
                 {categories.map(y => (
                   <option key={y} value={y}>{y}</option>
                 ))}
