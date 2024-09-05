@@ -1,10 +1,11 @@
 import axios from "axios"
+import { base_url } from "../src/constants/url"
 
 export const fetchUsers = async()=>{
-    let response = await axios.get('https://b3pvkocb62.execute-api.us-east-1.amazonaws.com/dev/users', {
+    let response = await axios.get(`${base_url}/users`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-          'Content-Type': 'application/json'  // Optional, depending on your API needs
+          'Content-Type': 'application/json' 
         }
       })
       if(response.status == 200) {
@@ -14,12 +15,15 @@ export const fetchUsers = async()=>{
     }
 }
 
-export const filterResults = async(year,month,date,type)=>{
+export const filterResults = async(year,month,date,type,userEmail,category)=>{
     const queryParams = (month && date) ? year += ('-' + month+ '-' + date) : month ? year += '-' + month : year
-    let response = await axios.get(`https://b3pvkocb62.execute-api.us-east-1.amazonaws.com/dev/${type}?year=${queryParams}`, {
+    let basicUrl = `${base_url}/${type}?year=${queryParams}`
+    if (userEmail) basicUrl += `&user=${userEmail}`
+    if(category) basicUrl += `&category=${category}`
+    let response = await axios.get(basicUrl, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-          'Content-Type': 'application/json'  // Optional, depending on your API needs
+          'Content-Type': 'application/json'
         }
       })
       if(response.status == 200) {
