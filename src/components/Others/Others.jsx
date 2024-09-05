@@ -49,7 +49,7 @@ const Others = () => {
         setSelectedMonth(currentDate[1])
         setSelectedDay(currentDate[2])
         setFilteredResults([])
-        let results = await filterResults(String(currentDate[0]),String(currentDate[1]),String(currentDate[2]),'others')
+        let results = await filterResults(String(currentDate[0]),String(currentDate[1]),String(currentDate[2]),'others',String(selectedUser))
         console.log(results, 'filtered results')
         setFilteredResults(results.data)
         setTotal(results.total)
@@ -314,7 +314,7 @@ const Others = () => {
             >
               <option value="" disabled>User</option>
               {users.map(u => (
-                <option key={u.user_id} value={u.name}>{u.name}</option>
+                <option key={u.user_id} value={u.email}>{u.name}</option>
               ))}
             </select>
             <button

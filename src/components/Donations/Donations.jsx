@@ -54,15 +54,13 @@ const Donations = () => {
         setSelectedDay(currentDate[2])
         setFilteredResults([])
         let results = await filterResults(String(currentDate[0]),String(currentDate[1]),String(currentDate[2]),'donations')
-        console.log(results, 'filtered results')
         setFilteredResults(results.data)
         setTotal(results.total)
         setCurrentPage(1); // Reset to first page
         return;
       }
       setLoading(true)
-      let results = await filterResults(String(selectedYear),String(selectedMonth),String(selectedDay),'donations')
-      console.log(results, 'filtered results')
+      let results = await filterResults(String(selectedYear),String(selectedMonth),String(selectedDay),'donations',String(selectedUser), String(selectedCategory))
       setFilteredResults(results.data)
       setTotal(results.total)
       setCurrentPage(1); // Reset to first page when filters change
@@ -320,7 +318,7 @@ const Donations = () => {
             >
               <option value="" disabled>User</option>
               {users.map(u => (
-                <option key={u.user_id} value={u.name}>{u.name}</option>
+                <option key={u.user_id} value={u.email}>{u.name}</option>
               ))}
             </select>
             <select

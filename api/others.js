@@ -1,7 +1,8 @@
 import axios from "axios"
+import { base_url } from "../src/constants/url"
 
 export const addOthers = async(newItem)=>{
-    let response = await axios.post(`https://b3pvkocb62.execute-api.us-east-1.amazonaws.com/dev/others`, newItem, {
+    let response = await axios.post(`${base_url}/others`, newItem, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           'Content-Type': 'application/json'  // Optional, depending on your API needs
@@ -15,7 +16,7 @@ export const addOthers = async(newItem)=>{
 }
 
 export const editOthers = async(item)=>{
-    let response = await axios.put(`https://b3pvkocb62.execute-api.us-east-1.amazonaws.com/dev/others?operation=edit`, item, {
+    let response = await axios.put(`${base_url}/others?operation=edit`, item, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           'Content-Type': 'application/json'  // Optional, depending on your API needs
@@ -29,7 +30,7 @@ export const editOthers = async(item)=>{
 }
 
 export const deleteOthers = async(item)=>{
-  let response = await axios.put(`https://b3pvkocb62.execute-api.us-east-1.amazonaws.com/dev/others?operation=delete`, item, {
+  let response = await axios.put(`${base_url}/others?operation=delete`, item, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         'Content-Type': 'application/json'  // Optional, depending on your API needs

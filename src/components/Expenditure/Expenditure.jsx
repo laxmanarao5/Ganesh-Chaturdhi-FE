@@ -46,7 +46,7 @@ const Expenditure = () => {
   // Filter the data based on selected filters
   const handleFilter = async() => {
     try {
-      if (!selectedYear && !selectedMonth && !selectedDay && !selectedUser) {
+      if (!selectedYear && !selectedMonth && !selectedDay && !selectedUser && !selectedCategory) {
         // If no filters are selected, clear the filteredResults
         const currentDate = new Date().toISOString().slice(0, 10).split("-")
         setSelectedYear(currentDate[0])
@@ -60,24 +60,8 @@ const Expenditure = () => {
         setCurrentPage(1); // Reset to first page
         return;
       }
-
-      // const filtered = expenditureData.filter(item => {
-      //   const itemDate = new Date(item.date);
-      //   const itemYear = itemDate.getFullYear();
-      //   const itemMonth = itemDate.getMonth() + 1; // JavaScript months are 0-based
-      //   const itemDay = itemDate.getDate();
-
-      //   return (
-      //     (selectedYear ? itemYear === parseInt(selectedYear) : true) &&
-      //     (selectedMonth ? itemMonth === parseInt(selectedMonth) : true) &&
-      //     (selectedDay ? itemDay === parseInt(selectedDay) : true) &&
-      //     (selectedUser ? item.user === selectedUser : true)
-      //   );
-      // });
-      // setFilteredResults(filtered);
       setLoading(true)
-      let results = await filterResults(String(selectedYear),String(selectedMonth),String(selectedDay),'expenditure')
-      console.log(results, 'filtered results')
+      let results = await filterResults(String(selectedYear),String(selectedMonth),String(selectedDay),'expenditure',String(selectedUser), String(selectedCategory))
       setFilteredResults(results.data)
       setTotal(results.total)
       setCurrentPage(1); // Reset to first page when filters change
@@ -91,8 +75,8 @@ const Expenditure = () => {
   // Pagination logic
   const indexOfLastResult = currentPage * resultsPerPage;
   const indexOfFirstResult = indexOfLastResult - resultsPerPage;
-  const currentResults = filteredResults.slice(indexOfFirstResult, indexOfLastResult);
-  const totalPages = Math.ceil(filteredResults.length / resultsPerPage);
+  const currentResults = filteredResults?.slice(indexOfFirstResult, indexOfLastResult);
+  const totalPages = Math.ceil(filteredResults?.length / resultsPerPage);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -258,7 +242,7 @@ const Expenditure = () => {
       });
     }
     setItemToDelete(null);
-    handleFilter
+    handleFilter()
   } catch(error) {
     console.log(error, 'error')
   } finally {
@@ -336,7 +320,7 @@ const Expenditure = () => {
             >
               <option value="" disabled>User</option>
               {users.map(u => (
-                <option key={u.user_id} value={u.name}>{u.name}</option>
+                <option key={u.user_id} value={u.email}>{u.name}</option>
               ))}
             </select>
             <select

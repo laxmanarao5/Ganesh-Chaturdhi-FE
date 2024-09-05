@@ -58,7 +58,7 @@ const Offerings = () => {
         return;
       }
       setLoading(true)
-      let results = await filterResults(String(selectedYear),String(selectedMonth),String(selectedDay),'offerings')
+      let results = await filterResults(String(selectedYear),String(selectedMonth),String(selectedDay),'offerings',String(selectedUser))
       console.log(results, 'filtered results')
       setFilteredResults(results.data)
       setTotal(results.total)
@@ -316,7 +316,7 @@ const Offerings = () => {
             >
               <option value="" disabled>User</option>
               {users.map(u => (
-                <option key={u.user_id} value={u.name}>{u.name}</option>
+                <option key={u.user_id} value={u.email}>{u.name}</option>
               ))}
             </select>
             <button
