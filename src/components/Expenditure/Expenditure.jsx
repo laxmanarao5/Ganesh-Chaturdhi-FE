@@ -54,7 +54,6 @@ const Expenditure = () => {
         setSelectedDay(currentDate[2])
         setFilteredResults([])
         let results = await filterResults(String(currentDate[0]),String(currentDate[1]),String(currentDate[2]),'expenditure')
-        console.log(results, 'filtered results')
         setFilteredResults(results.data)
         setTotal(results.total)
         setCurrentPage(1); // Reset to first page

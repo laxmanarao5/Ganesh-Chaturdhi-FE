@@ -11,7 +11,7 @@ export const addUser = async(newItem)=>{
       if(response.status == 200) {
         return response
       } else {
-        console.log('error adding expenditure')
+        console.log('error adding user')
     }
 }
 
@@ -25,7 +25,7 @@ export const editUser = async(item)=>{
       if(response.status == 200) {
         return response
       } else {
-        console.log('error editing expenditure')
+        console.log('error editing user')
     }
 }
 
@@ -39,6 +39,6 @@ export const deleteUser = async(item)=>{
     if(response.status == 200) {
       return response
     } else {
-      console.log('error deleting expenditure')
+      console.log('error deleting user')
   }
 }
